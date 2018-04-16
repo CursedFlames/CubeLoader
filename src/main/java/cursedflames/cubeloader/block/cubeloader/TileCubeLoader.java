@@ -149,7 +149,6 @@ public class TileCubeLoader extends GenericTileEntity
 		Util.updateBlock(world, pos, null, false, true, false, false, false);
 	}
 
-	// TODO setter for all three at once
 	public void setXRange(int xRange) {
 		this.xRange = xRange;
 		updateClients();
