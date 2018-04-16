@@ -1,0 +1,91 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "cubeloader:unloaddetector",
+    "textures": {
+      "face": "cubeloader:blocks/unloaddetector_0"
+    }
+  },
+  "variants": {
+    "normal": [{}],
+    "inventory": [{}],
+    "counter": {
+      "0": {},
+      "1": {
+        "textures": {
+          "face": "cubeloader:blocks/unloaddetector_1"
+        }
+      },
+	  "2": {
+        "textures": {
+          "face": "cubeloader:blocks/unloaddetector_2"
+        }
+      },
+	  "3": {
+        "textures": {
+          "face": "cubeloader:blocks/unloaddetector_3"
+        }
+      },
+	  "4": {
+        "textures": {
+          "face": "cubeloader:blocks/unloaddetector_4"
+        }
+      },
+	  "5": {
+        "textures": {
+          "face": "cubeloader:blocks/unloaddetector_5"
+        }
+      },
+	  "6": {
+        "textures": {
+          "face": "cubeloader:blocks/unloaddetector_6"
+        }
+      },
+	  "7": {
+        "textures": {
+          "face": "cubeloader:blocks/unloaddetector_7"
+        }
+      },
+	  "8": {
+        "textures": {
+          "face": "cubeloader:blocks/unloaddetector_8"
+        }
+      },
+	  "9": {
+        "textures": {
+          "face": "cubeloader:blocks/unloaddetector_9"
+        }
+      },
+	  "10": {
+        "textures": {
+          "face": "cubeloader:blocks/unloaddetector_10"
+        }
+      },
+	  "11": {
+        "textures": {
+          "face": "cubeloader:blocks/unloaddetector_11"
+        }
+      },
+	  "12": {
+        "textures": {
+          "face": "cubeloader:blocks/unloaddetector_12"
+        }
+      },
+	  "13": {
+        "textures": {
+          "face": "cubeloader:blocks/unloaddetector_13"
+        }
+      },
+	  "14": {
+        "textures": {
+          "face": "cubeloader:blocks/unloaddetector_14"
+        }
+      },
+	  "15": {
+        "textures": {
+          "face": "cubeloader:blocks/unloaddetector_15"
+        }
+      }
+    }
+  }
+}

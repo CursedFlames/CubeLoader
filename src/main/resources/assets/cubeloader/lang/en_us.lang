@@ -1,0 +1,4 @@
+﻿
+tile.cubeloader.cubeloader.name=Cube Loader
+tile.cubeloader.unloaddetector.name=Unload Detector
+itemGroup.cubeloader=Cube Loader

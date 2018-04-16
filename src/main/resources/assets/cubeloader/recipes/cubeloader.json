@@ -1,0 +1,25 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		" E ",
+		"GDG",
+		"OOO"
+	],
+	"key": {
+		"E": {
+			"item": "minecraft:ender_eye"
+		},
+		"G": {
+			"item": "minecraft:gold_ingot"
+		},
+		"D": {
+			"item": "minecraft:diamond"
+		},
+		"O": {
+			"item": "minecraft:obsidian"
+		}
+	},
+	"result": {
+		"item": "cubeloader:cubeloader"
+	}
+}

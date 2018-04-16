@@ -1,0 +1,19 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "cubeloader:cubeloader",
+	"textures": {
+	  "particle": "cubeloader:blocks/cubeloader_exterior",
+	  "bar": "cubeloader:blocks/cubeloader_bar",
+	  "int": "cubeloader:blocks/cubeloader_interior",
+	  "ext": "cubeloader:blocks/cubeloader_exterior",
+	  "gem": "cubeloader:blocks/cubeloader_gem"
+	}
+  },
+  "variants": {
+    "normal": [{}],
+    "inventory": [{
+	  "transform": "forge:default-block"
+	}]
+  }
+}

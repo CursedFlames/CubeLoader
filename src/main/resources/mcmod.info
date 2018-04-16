@@ -1,0 +1,18 @@
+[
+{
+  "modid": "cubeloader",
+  "name": "Cube Loader",
+  "description": "Mod that adds chunkloaders for Cubic Chunks",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["CursedFlames"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "useDependencyInformation": true,
+  "requiredMods": ["cubicchunks"],
+  "dependencies": ["cubicchunks", "cursedlib", "albedo"]
+}
+]
