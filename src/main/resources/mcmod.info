@@ -12,7 +12,7 @@
   "logoFile": "",
   "screenshots": [],
   "useDependencyInformation": true,
-  "requiredMods": ["cubicchunks"],
+  "requiredMods": ["cubicchunks", "cursedlib@[0.0.2,)"],
   "dependencies": ["cubicchunks", "cursedlib", "albedo"]
 }
 ]
