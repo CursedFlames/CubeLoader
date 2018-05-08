@@ -1,17 +1,26 @@
 package cursedflames.cubeloader.block.unloaddetector;
 
+import java.util.List;
+
+import javax.annotation.Nullable;
+
 import cursedflames.cubeloader.CubeLoader;
 import cursedflames.lib.block.GenericTileBlock;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class BlockUnloadDetector extends GenericTileBlock {
 	public static final PropertyInteger counter = PropertyInteger.create("counter", 0, 15);
@@ -19,7 +28,16 @@ public class BlockUnloadDetector extends GenericTileBlock {
 	public BlockUnloadDetector() {
 		super(CubeLoader.MODID, "unloaddetector", TileUnloadDetector.class,
 				CubeLoader.TAB_CUBELOADER);
-		CubeLoader.registryHelper.addBlock(this).addItemBlock(this).addItemBlockModel(this)
+		ItemBlock itemBlock = new ItemBlock(this) {
+			@Override
+			@SideOnly(Side.CLIENT)
+			public void addInformation(ItemStack stack, @Nullable World worldIn,
+					List<String> tooltip, ITooltipFlag flagIn) {
+				tooltip.add("§4Warning: has not been tested. Use at your own risk.");
+			}
+		};
+		itemBlock.setRegistryName(getRegistryName());
+		CubeLoader.registryHelper.addBlock(this).addItemBlock(itemBlock).addItemBlockModel(this)
 				.addTileEntity(getUnlocalizedName(), TileUnloadDetector.class);
 		setDefaultState(blockState.getBaseState().withProperty(counter, 0));
 	}

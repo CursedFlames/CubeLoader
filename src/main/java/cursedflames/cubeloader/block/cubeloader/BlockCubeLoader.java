@@ -33,6 +33,7 @@ public class BlockCubeLoader extends GenericTileBlock {
 		if (tile instanceof TileCubeLoader) {
 			TileCubeLoader te = (TileCubeLoader) tile;
 			te.owner = placer.getUniqueID();
+			te.markDirty();
 			te.updateCubeLoading(false);
 		}
 	}

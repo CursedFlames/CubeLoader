@@ -61,8 +61,6 @@ public class Config {
 		}
 	}
 
-	public static SyncedConfig syncedConfig;
-
 	// TODO dimension whitelist/blacklist
 	// TODO figure out whether adminLoaderIn... will work in multiplayer
 //	public static boolean adminLoaderInCreativeMenu;
@@ -78,7 +76,7 @@ public class Config {
 		// maxCubesLoaded defaults to -2, if it's something else, an old config
 		// must have been loaded and deleted
 		maxCubesLoaded = configuration.get("general", "maxCubesLoaded",
-				maxCubesLoaded==-2 ? 256 : maxCubesLoaded,
+				maxCubesLoaded==-2 ? 1600 : maxCubesLoaded,
 				"The maximum number of cubes that a player can load. -1 for infinite.", -1, 1000000)
 				.getInt();
 	}
@@ -102,6 +100,7 @@ public class Config {
 //				newInstance.adminLoaderInCreativeMenu = tag.getBoolean("adminLoaderInCreativeMenu");
 				newInstance.maxCubesLoaded = tag.getInteger("maxCubesLoaded");
 				INSTANCE = newInstance;
+				CommonProxy.logger.info("Synced"+newInstance.maxCubesLoaded);
 				return newInstance;
 			} catch (Error e) {
 				CommonProxy.logger.error("Failed to load sync tag, keeping old SyncedConfig", e);

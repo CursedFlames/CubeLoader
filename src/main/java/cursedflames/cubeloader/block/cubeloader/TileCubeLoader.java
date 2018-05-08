@@ -11,6 +11,7 @@ import cubicchunks.world.ICubicWorld;
 import cursedflames.cubeloader.chunkloading.ChunkloaderManager;
 import cursedflames.cubeloader.chunkloading.ChunkloaderPos;
 import cursedflames.cubeloader.chunkloading.PlayerChunkloaders;
+import cursedflames.cubeloader.config.Config;
 import cursedflames.lib.Util;
 import cursedflames.lib.block.GenericTileEntity;
 import net.minecraft.nbt.NBTTagCompound;
@@ -24,12 +25,14 @@ import net.minecraftforge.items.ItemStackHandler;
 public class TileCubeLoader extends GenericTileEntity
 		implements ITicket/* , ILightProvider */ {
 	UUID owner;
+	private PlayerChunkloaders playerLoaders;
 	private static final int DEFAULT_HORIZONTAL_RADIUS = 1;
 	private static final int DEFAULT_VERTICAL_RADIUS = 1;
 	private int xRange = DEFAULT_HORIZONTAL_RADIUS;
 	private int yRange = DEFAULT_VERTICAL_RADIUS;
 	private int zRange = DEFAULT_HORIZONTAL_RADIUS;
 	private Set<TicketList> ticketLists = new HashSet<>();
+	private boolean disabled = false;
 //	TESRCubeLoader.TESRPolyhedronData poly = new TESRCubeLoader.TESRPolyhedronData();
 	ItemStackHandler itemHandler = new ItemStackHandler(3) {
 		@Override
@@ -45,17 +48,20 @@ public class TileCubeLoader extends GenericTileEntity
 		tag.setInteger("xRange", xRange);
 		tag.setInteger("yRange", yRange);
 		tag.setInteger("zRange", zRange);
+		tag.setBoolean("disabled", disabled);
 		tag.setTag("items", itemHandler.serializeNBT());
 		return tag;
 	}
 
 	@Override
 	public void readDataFromNBT(NBTTagCompound tag) {
-		if (tag.hasKey("owner"))
+		if (tag.hasUniqueId("owner")) {
 			owner = tag.getUniqueId("owner");
+		}
 		xRange = tag.hasKey("xRange") ? tag.getInteger("xRange") : DEFAULT_HORIZONTAL_RADIUS;
 		yRange = tag.hasKey("yRange") ? tag.getInteger("yRange") : DEFAULT_VERTICAL_RADIUS;
 		zRange = tag.hasKey("zRange") ? tag.getInteger("zRange") : DEFAULT_HORIZONTAL_RADIUS;
+		disabled = tag.getBoolean("disabled");
 		if (tag.hasKey("items"))
 			itemHandler.deserializeNBT(tag.getCompoundTag("items"));
 	}
@@ -79,16 +85,19 @@ public class TileCubeLoader extends GenericTileEntity
 //		updateCubeLoading(false);
 //	}
 
-	/**
-	 * 
-	 * @return whether the cubeloader is enabled - should be removed from any
-	 *         CubeLoader lists if false
-	 */
-	public boolean updateCubeLoading(boolean worldLoad) {
+	public PlayerChunkloaders getPlayerChunkloaders() {
+		if (playerLoaders==null) {
+			playerLoaders = ChunkloaderManager.getInstance((World) world)
+					.getPlayerChunkloaders(owner);
+		}
+		return playerLoaders;
+	}
+
+	public void updateCubeLoading(boolean worldLoad) {
 		if (!world.isRemote) {
 			// TODO add non-cubic world compatibility
 			if (!(this.world instanceof ICubicWorld))
-				return false;
+				return;
 			for (Iterator<TicketList> iter = ticketLists.iterator(); iter.hasNext();) {
 				TicketList tickets = iter.next();
 				if (tickets.contains(this)) {
@@ -97,44 +106,66 @@ public class TileCubeLoader extends GenericTileEntity
 			}
 			ticketLists = new HashSet<>();
 			ICubicWorld world = ((ICubicWorld) this.world);
-			int chunkX = pos.getX()>>4;
-			int chunkY = pos.getY()>>4;
-			int chunkZ = pos.getZ()>>4;
-//			CommonProxy.logger.info("ranges "+xRange+" "+yRange+" "+zRange);
-			for (int x = chunkX-xRange; x<chunkX+xRange+1; x++) {
-				for (int y = chunkY-yRange; y<chunkY+yRange+1; y++) {
-					for (int z = chunkZ-zRange; z<chunkZ+zRange+1; z++) {
-//						CommonProxy.logger.info("loading "+x+" "+y+" "+z);
-						TicketList tickets = world.getCubeFromCubeCoords(x, y, z).getTickets();
-						ticketLists.add(tickets);
-						if (!tickets.contains(this)) {
-							tickets.add(this);
+			if (!worldLoad) {
+				PlayerChunkloaders loaders = ChunkloaderManager.getInstance((World) world)
+						.getPlayerChunkloaders(owner);
+				if (loaders!=null) {
+					ChunkloaderPos loaderPos = new ChunkloaderPos(pos,
+							world.getProvider().getDimension());
+					Set<ChunkloaderPos> loaderPoses = loaders.getChunkloaders();
+					int loaded = loaders.getTotalLoaded();
+					if (!loaderPoses.contains(loaderPos))
+						loaded += getNumCubesInRange();
+					if (Config.maxCubesLoaded>-1&&loaded>Config.maxCubesLoaded) {
+						// refresh loaded cube count if this loader wasn't
+						// already disabled
+						if (!disabled) {
+							loaders.markDirty();
+							disabled = true;
+							markDirty();
+						}
+					}
+					if (disabled) {
+						if (loaderPoses.contains(loaderPos)) {
+							loaderPoses.remove(loaderPos);
+							loaders.markDirty();
+						}
+						return;
+					}
+					loaderPoses.add(loaderPos);
+					loaders.markDirty();
+				}
+			}
+			if (!disabled) {
+				int chunkX = pos.getX()>>4;
+				int chunkY = pos.getY()>>4;
+				int chunkZ = pos.getZ()>>4;
+//				CommonProxy.logger.info("ranges "+xRange+" "+yRange+" "+zRange);
+				for (int x = chunkX-xRange; x<chunkX+xRange+1; x++) {
+					for (int y = chunkY-yRange; y<chunkY+yRange+1; y++) {
+						for (int z = chunkZ-zRange; z<chunkZ+zRange+1; z++) {
+//							CommonProxy.logger.info("loading "+x+" "+y+" "+z);
+							TicketList tickets = world.getCubeFromCubeCoords(x, y, z).getTickets();
+							ticketLists.add(tickets);
+							if (!tickets.contains(this)) {
+								tickets.add(this);
+							}
 						}
 					}
 				}
 			}
 			// attempting to modify player chunk loaders when loading the world
 			// will cause a ConcurrentModificationException
-			if (worldLoad)
-				return true;
-			PlayerChunkloaders loaders = ChunkloaderManager.getInstance((World) world)
-					.getPlayerChunkloaders(owner);
-			if (loaders!=null) {
-				// TODO check that player is not above chunkloader limit
-				loaders.getChunkloaders()
-						.add(new ChunkloaderPos(pos, world.getProvider().getDimension()));
-			}
 		}
-		return true;
 	}
 
 	// TODO add support for disabled loaders
 	public int getNumCubesLoaded() {
-		return (xRange*2+1)*(yRange*2+1)*(zRange*2+1);
+		return disabled ? 0 : getNumCubesInRange();
 	}
 
 	public int getNumCubesInRange() {
-		return getNumCubesLoaded();
+		return (xRange*2+1)*(yRange*2+1)*(zRange*2+1);
 	}
 
 	public UUID getOwner() {
@@ -186,6 +217,16 @@ public class TileCubeLoader extends GenericTileEntity
 		this.yRange = yRange;
 		this.zRange = zRange;
 		updateClients();
+		markDirty();
+		updateCubeLoading(false);
+	}
+
+	public boolean isDisabled() {
+		return disabled;
+	}
+
+	public void setDisabled(boolean disabled) {
+		this.disabled = disabled;
 		markDirty();
 		updateCubeLoading(false);
 	}

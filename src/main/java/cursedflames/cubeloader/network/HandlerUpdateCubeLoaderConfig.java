@@ -8,20 +8,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class HandlerUpdateCubeLoaderConfig implements IMessageHandler<NBTPacket, IMessage> {
-	@Override
-	public IMessage onMessage(NBTPacket message, MessageContext ctx) {
-		FMLCommonHandler.instance().getWorldThread(ctx.netHandler)
-				.addScheduledTask(() -> handleMessage(message, ctx));
-		return null;
-	}
-
-	private void handleMessage(NBTPacket message, MessageContext ctx) {
+public class HandlerUpdateCubeLoaderConfig {
+	public static void handleMessage(NBTPacket message, MessageContext ctx) {
 		NBTTagCompound tag = message.getTag();
 		if (!tag.hasKey("pos"))
 			return;
@@ -32,8 +22,11 @@ public class HandlerUpdateCubeLoaderConfig implements IMessageHandler<NBTPacket,
 			TileEntity te = world.getTileEntity(pos);
 			if (te instanceof TileCubeLoader) {
 				TileCubeLoader loader = (TileCubeLoader) te;
-				loader.setRange(tag.getInteger("xRange"), tag.getInteger("yRange"),
-						tag.getInteger("zRange"));
+				if (tag.hasKey("xRange")&&tag.hasKey("yRange")&&tag.hasKey("zRange"))
+					loader.setRange(tag.getInteger("xRange"), tag.getInteger("yRange"),
+							tag.getInteger("zRange"));
+				if (tag.hasKey("disabled"))
+					loader.setDisabled(tag.getBoolean("disabled"));
 			}
 		}
 	}

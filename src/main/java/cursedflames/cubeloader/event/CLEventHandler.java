@@ -1,9 +1,13 @@
 package cursedflames.cubeloader.event;
 
+import java.util.UUID;
+
 import cursedflames.cubeloader.block.cubeloader.TESRCubeLoader;
 import cursedflames.cubeloader.chunkloading.ChunkloaderManager;
 import cursedflames.cubeloader.config.Config;
 import cursedflames.cubeloader.network.PacketHandler;
+import cursedflames.cubeloader.network.PacketHandler.HandlerIds;
+import cursedflames.cubeloader.proxy.CommonProxy;
 import cursedflames.lib.network.NBTPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -33,9 +37,17 @@ public class CLEventHandler {
 	@SubscribeEvent
 	public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
 		if (!event.player.world.isRemote) {
+			CommonProxy.logger.info("Attempting to sync config");
 			NBTTagCompound tag = Config.getSyncTag();
 			tag.setInteger("time", event.player.world.getMinecraftServer().getTickCounter());
-			PacketHandler.INSTANCE.sendTo(new NBTPacket(tag), (EntityPlayerMP) event.player);
+			PacketHandler.INSTANCE.sendTo(new NBTPacket(tag, HandlerIds.SYNC_SERVER_DATA.id),
+					(EntityPlayerMP) event.player);
+			ChunkloaderManager manager = ChunkloaderManager.getInstance(event.player.world);
+			String name = event.player.getName();
+			UUID id = event.player.getUniqueID();
+			if (name!=manager.getPlayerName(id)) {
+				manager.setPlayerName(id, name);
+			}
 		}
 	}
 
