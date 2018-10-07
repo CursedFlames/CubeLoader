@@ -17,7 +17,7 @@ public class HandlerUpdateCubeLoaderConfig {
 			return;
 		EntityPlayer player = ctx.getServerHandler().player;
 		World world = player.getEntityWorld();
-		BlockPos pos = Util.blockPosFromNBT(message.getTag().getCompoundTag("pos"));
+		BlockPos pos = Util.blockPosFromNBT(tag.getCompoundTag("pos"));
 		if (world.isBlockLoaded(pos)) {
 			TileEntity te = world.getTileEntity(pos);
 			if (te instanceof TileCubeLoader) {

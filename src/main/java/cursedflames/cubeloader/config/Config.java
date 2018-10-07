@@ -65,6 +65,7 @@ public class Config {
 	// TODO figure out whether adminLoaderIn... will work in multiplayer
 //	public static boolean adminLoaderInCreativeMenu;
 	public static int maxCubesLoaded = -2;
+	public static boolean fueled = false;
 
 	public static void initConfig() {
 //		adminLoaderInCreativeMenu = configuration.get("general", "adminLoaderInCreativeMenu", false,
@@ -79,12 +80,17 @@ public class Config {
 				maxCubesLoaded==-2 ? 1600 : maxCubesLoaded,
 				"The maximum number of cubes that a player can load. -1 for infinite.", -1, 1000000)
 				.getInt();
+		fueled = configuration
+				.get("general", "fueled", false,
+						"Whether or not cubeloaders require fuel to run. Fuel items are specified in the fuel json file in the config directory.")
+				.getBoolean();
 	}
 
 	public static NBTTagCompound getSyncTag() {
 		NBTTagCompound tag = new NBTTagCompound();
 //		tag.setBoolean("adminLoaderInCreativeMenu", adminLoaderInCreativeMenu);
 		tag.setInteger("maxCubesLoaded", maxCubesLoaded);
+		tag.setBoolean("fueled", fueled);
 		return tag;
 	}
 
@@ -93,14 +99,16 @@ public class Config {
 
 //		public boolean adminLoaderInCreativeMenu;
 		public int maxCubesLoaded;
+		public boolean fueled;
 
 		public static SyncedConfig loadSyncTag(NBTTagCompound tag) {
 			try {
 				SyncedConfig newInstance = new SyncedConfig();
 //				newInstance.adminLoaderInCreativeMenu = tag.getBoolean("adminLoaderInCreativeMenu");
 				newInstance.maxCubesLoaded = tag.getInteger("maxCubesLoaded");
+				newInstance.fueled = tag.getBoolean("fueled");
 				INSTANCE = newInstance;
-				CommonProxy.logger.info("Synced"+newInstance.maxCubesLoaded);
+				// CommonProxy.logger.info("Synced"+newInstance.maxCubesLoaded);
 				return newInstance;
 			} catch (Error e) {
 				CommonProxy.logger.error("Failed to load sync tag, keeping old SyncedConfig", e);
