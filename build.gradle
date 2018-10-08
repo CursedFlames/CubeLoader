@@ -15,7 +15,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'java'
 
 
-version = "1.12.2-0.0.4"
+version = "1.12.2-0.0.5"
 group = "cursedflames.cubeloader" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "CubeLoader"
 
