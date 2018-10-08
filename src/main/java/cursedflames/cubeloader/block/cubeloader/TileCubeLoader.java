@@ -5,15 +5,16 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
 
-import cubicchunks.util.ticket.ITicket;
-import cubicchunks.util.ticket.TicketList;
-import cubicchunks.world.ICubicWorld;
 import cursedflames.cubeloader.chunkloading.ChunkloaderManager;
 import cursedflames.cubeloader.chunkloading.ChunkloaderPos;
 import cursedflames.cubeloader.chunkloading.PlayerChunkloaders;
 import cursedflames.cubeloader.config.Config;
 import cursedflames.lib.Util;
 import cursedflames.lib.block.GenericTileEntity;
+import io.github.opencubicchunks.cubicchunks.api.world.ICubicWorld;
+import io.github.opencubicchunks.cubicchunks.core.util.ticket.ITicket;
+import io.github.opencubicchunks.cubicchunks.core.util.ticket.TicketList;
+import io.github.opencubicchunks.cubicchunks.core.world.cube.Cube;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -111,7 +112,7 @@ public class TileCubeLoader extends GenericTileEntity
 						.getPlayerChunkloaders(owner);
 				if (loaders!=null) {
 					ChunkloaderPos loaderPos = new ChunkloaderPos(pos,
-							world.getProvider().getDimension());
+							this.world.provider.getDimension());
 					Set<ChunkloaderPos> loaderPoses = loaders.getChunkloaders();
 					int loaded = loaders.getTotalLoaded();
 					if (!loaderPoses.contains(loaderPos))
@@ -145,7 +146,8 @@ public class TileCubeLoader extends GenericTileEntity
 					for (int y = chunkY-yRange; y<chunkY+yRange+1; y++) {
 						for (int z = chunkZ-zRange; z<chunkZ+zRange+1; z++) {
 //							CommonProxy.logger.info("loading "+x+" "+y+" "+z);
-							TicketList tickets = world.getCubeFromCubeCoords(x, y, z).getTickets();
+							TicketList tickets = ((Cube) world.getCubeFromCubeCoords(x, y, z))
+									.getTickets();
 							ticketLists.add(tickets);
 							if (!tickets.contains(this)) {
 								tickets.add(this);
