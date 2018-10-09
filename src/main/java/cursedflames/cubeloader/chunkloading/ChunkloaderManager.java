@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import cursedflames.cubeloader.CubeLoader;
-import cursedflames.cubeloader.proxy.CommonProxy;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
@@ -96,7 +95,7 @@ public class ChunkloaderManager extends WorldSavedData {
 	}
 
 	public void reloadChunkloaders() {
-		CommonProxy.logger.info("Reloading chunkloaders...");
+		CubeLoader.logger.info("Reloading chunkloaders...");
 		loaders.values().forEach(playerChunkloaders -> playerChunkloaders.reloadChunkloaders());
 	}
 

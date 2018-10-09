@@ -4,16 +4,13 @@ import java.io.File;
 
 import org.apache.logging.log4j.Level;
 
-import cursedflames.cubeloader.proxy.CommonProxy;
+import cursedflames.cubeloader.CubeLoader;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
-//TODO find a better way to store synced config data
-//TODO make data sync when playing LAN multiplayer
-//TODO put most of this into an abstract Config class in CursedLib?
-//TODO maybe try using @Config annotations instead?
+//TODO switched to CursedLib config system
 public class Config {
 	public static Configuration configuration;
 	private static boolean configReset = false;
@@ -26,7 +23,7 @@ public class Config {
 			String version = configuration.get("general", "version", "").getString();
 			if (version.equals("0")) {
 				try {
-					CommonProxy.logger.info("Deleting old config file, properties will be saved.");
+					CubeLoader.logger.info("Deleting old config file, properties will be saved.");
 					if (configuration.hasKey("general", "maxCubesLoaded")) {
 						maxCubesLoaded = configuration.get("general", "maxCubesLoaded", -2)
 								.getInt();
@@ -34,8 +31,8 @@ public class Config {
 					configFile.delete();
 					configReset = true;
 				} catch (Error error) {
-					CommonProxy.logger.warn("Failed to delete old config file");
-					CommonProxy.logger.catching(Level.WARN, error);
+					CubeLoader.logger.warn("Failed to delete old config file");
+					CubeLoader.logger.catching(Level.WARN, error);
 				}
 			}
 		}
@@ -53,7 +50,7 @@ public class Config {
 			configuration.load();
 			initConfig();
 		} catch (Exception e) {
-			CommonProxy.logger.error("Failed to load config: ", e);
+			CubeLoader.logger.error("Failed to load config: ", e);
 		} finally {
 			if (configuration.hasChanged()||configReset) {
 				configuration.save();
@@ -111,7 +108,7 @@ public class Config {
 				// CommonProxy.logger.info("Synced"+newInstance.maxCubesLoaded);
 				return newInstance;
 			} catch (Error e) {
-				CommonProxy.logger.error("Failed to load sync tag, keeping old SyncedConfig", e);
+				CubeLoader.logger.error("Failed to load sync tag, keeping old SyncedConfig", e);
 				return INSTANCE;
 			}
 		}

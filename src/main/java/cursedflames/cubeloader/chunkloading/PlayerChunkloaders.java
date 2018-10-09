@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Set;
 
 import cursedflames.cubeloader.block.cubeloader.TileCubeLoader;
-import cursedflames.cubeloader.proxy.CommonProxy;
 import cursedflames.lib.Util;
 import net.minecraft.nbt.NBTTagList;
 
@@ -45,7 +44,7 @@ public class PlayerChunkloaders {
 	public void reloadChunkloaders() {
 		chunkloaders.forEach(pos -> {
 			TileCubeLoader te = pos.getCubeLoader(true, true);
-			CommonProxy.logger.info(te);
+//			CubeLoader.logger.info(te);
 			if (te!=null) {
 				te.updateCubeLoading(true);
 			}
