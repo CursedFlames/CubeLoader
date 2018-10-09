@@ -17,6 +17,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -29,11 +30,12 @@ public class BlockUnloadDetector extends GenericTileBlock {
 		super(CubeLoader.MODID, "unloaddetector", TileUnloadDetector.class,
 				CubeLoader.TAB_CUBELOADER);
 		ItemBlock itemBlock = new ItemBlock(this) {
+			@SuppressWarnings("deprecation")
 			@Override
 			@SideOnly(Side.CLIENT)
 			public void addInformation(ItemStack stack, @Nullable World worldIn,
 					List<String> tooltip, ITooltipFlag flagIn) {
-				tooltip.add("§4Warning: has not been tested. Use at your own risk.");
+				tooltip.add(I18n.translateToLocal(getUnlocalizedName()+".tooltip"));
 			}
 		};
 		itemBlock.setRegistryName(getRegistryName());

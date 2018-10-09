@@ -17,12 +17,21 @@ import net.minecraft.util.ResourceLocation;
 
 //TODO figure out how to do dynamic GUI sizes instead of making it height 200
 //TODO add gui background
-//TODO make the slider names based on locale files instead of hardcoded
 public class GuiCubeLoader extends GuiContainer implements IGuiSliderListener {
 	public static final int WIDTH = 176;
 	public static final int HEIGHT = 256;
 	private TileCubeLoader te;
 	private ContainerCubeLoader cont;
+	private final String KEY_PREFIX = CubeLoader.MODID+".gui.cubeloader";
+	private final String enable = CubeLoader.proxy.translate(KEY_PREFIX+".button.enable");
+	private final String disable = CubeLoader.proxy.translate(KEY_PREFIX+".button.disable");
+	private final String slider_x = CubeLoader.proxy.translate(KEY_PREFIX+".slider.x");
+	private final String slider_y = CubeLoader.proxy.translate(KEY_PREFIX+".slider.y");
+	private final String slider_z = CubeLoader.proxy.translate(KEY_PREFIX+".slider.z");
+	private final String status_disabled = CubeLoader.proxy
+			.translate(KEY_PREFIX+".status.disabled");
+	private final String status_nofuel = CubeLoader.proxy.translate(KEY_PREFIX+".status.nofuel");
+	private final String status_enabled = CubeLoader.proxy.translate(KEY_PREFIX+".status.enabled");
 
 	private static final ResourceLocation background = new ResourceLocation(CubeLoader.MODID,
 			"textures/gui/containercubeloader.png");
@@ -42,17 +51,17 @@ public class GuiCubeLoader extends GuiContainer implements IGuiSliderListener {
 		// TODO config option for max horizontal/vertical range
 		// TODO maybe make sliders snap to values instead of going smoothly -
 		// example of this is video settings mipmap slider
-		GuiSlider sliderX = new GuiSlider(0, guiLeft+8, guiTop+47, 160, 12, "X Radius: ", 0, 5,
+		GuiSlider sliderX = new GuiSlider(0, guiLeft+8, guiTop+47, 160, 12, slider_x, 0, 5,
 				te.getXRange(), false, true, true, this);
-		GuiSlider sliderY = new GuiSlider(1, guiLeft+8, guiTop+60, 160, 12, "Y Radius: ", 0, 5,
+		GuiSlider sliderY = new GuiSlider(1, guiLeft+8, guiTop+60, 160, 12, slider_y, 0, 5,
 				te.getYRange(), false, true, true, this);
-		GuiSlider sliderZ = new GuiSlider(2, guiLeft+8, guiTop+73, 160, 12, "Z Radius: ", 0, 5,
+		GuiSlider sliderZ = new GuiSlider(2, guiLeft+8, guiTop+73, 160, 12, slider_z, 0, 5,
 				te.getZRange(), false, true, true, this);
 		buttonList.add(sliderX);
 		buttonList.add(sliderY);
 		buttonList.add(sliderZ);
 		GuiBetterButton disableButton = new GuiBetterButton(3, guiLeft+4,
-				guiTop+fontRenderer.FONT_HEIGHT*3+7, 50, 12, "Disable");
+				guiTop+fontRenderer.FONT_HEIGHT*3+7, 50, 12, disable);
 		buttonList.add(disableButton);
 	}
 
@@ -73,7 +82,7 @@ public class GuiCubeLoader extends GuiContainer implements IGuiSliderListener {
 		GlStateManager.translate(guiLeft+4, guiTop+4, 0);
 		GlStateManager.disableLighting();
 		boolean disabled = cont.disabled;
-		buttonList.get(3).displayString = disabled ? "Enable" : "Disable";
+		buttonList.get(3).displayString = disabled ? enable : disable;
 		boolean fueled = cont.fueled;
 		boolean paused = cont.paused;
 		int teInRange = cont.cubesLoaded;
@@ -81,29 +90,39 @@ public class GuiCubeLoader extends GuiContainer implements IGuiSliderListener {
 		int maxLoaded = Config.SyncedConfig.INSTANCE!=null
 				? Config.SyncedConfig.INSTANCE.maxCubesLoaded : 256;
 		String loadFraction = ""+globalLoaded+(maxLoaded==-1 ? "" : ("/"+maxLoaded));
-		// TODO stop hardcoding text
+
 		if (disabled) {
-			fontRenderer.drawString("Disabled", 0, 0, RED, false);
+			fontRenderer.drawString(status_disabled, 0, 0, RED, false);
 		} else if (!fueled) {
-			fontRenderer.drawString("Out of Fuel", 0, 0, YELLOW, false);
+			fontRenderer.drawString(status_nofuel, 0, 0, YELLOW, false);
 		} else {
-			fontRenderer.drawString("Enabled", 0, 0, GREEN, false);
-			fontRenderer.drawString(teInRange+" cube"+(teInRange==1 ? "" : "s")+" loaded", 0,
-					fontRenderer.FONT_HEIGHT+1, GREEN, false);
+			fontRenderer.drawString(status_enabled, 0, 0, GREEN, false);
+			String teInRangeString;
+			if (CubeLoader.proxy
+					.hasTranslationKey(KEY_PREFIX+".localcubesloaded.override."+teInRange)) {
+				teInRangeString = CubeLoader.proxy.translateWithArgs(
+						KEY_PREFIX+".localcubesloaded.override."+teInRange, ""+teInRange);
+			} else {
+				teInRangeString = CubeLoader.proxy.translateWithArgs(KEY_PREFIX+".localcubesloaded",
+						""+teInRange);
+			}
+			fontRenderer.drawString(teInRangeString, 0, fontRenderer.FONT_HEIGHT+1, GREEN, false);
 		}
 		fontRenderer.drawString(loadFraction, WIDTH-8-fontRenderer.getStringWidth(loadFraction), 0,
 				(fueled&&(teInRange+globalLoaded<=maxLoaded||!disabled)) ? GREEN : YELLOW);
-		String owner = cont.ownerName==null||cont.ownerName.length()==0 ? "Unknown"
-				: cont.ownerName;
-		fontRenderer.drawString("Owner: "+owner, 0, fontRenderer.FONT_HEIGHT*2+2, BLACK);
+		String owner = cont.ownerName==null||cont.ownerName.length()==0
+				? CubeLoader.proxy.translate(KEY_PREFIX+".owner.unknown") : cont.ownerName;
+		fontRenderer.drawString(CubeLoader.proxy.translateWithArgs(KEY_PREFIX+".owner", owner), 0,
+				fontRenderer.FONT_HEIGHT*2+2, BLACK);
 		if (teInRange+globalLoaded>maxLoaded&&disabled) {
-			fontRenderer.drawString("Can't enable, over cap", 52, fontRenderer.FONT_HEIGHT*3+5,
-					YELLOW);
+			fontRenderer.drawString(CubeLoader.proxy.translate(KEY_PREFIX+".overcap"), 52,
+					fontRenderer.FONT_HEIGHT*3+5, YELLOW);
 			buttonList.get(3).enabled = false;
 		} else {
 			buttonList.get(3).enabled = true;
 		}
 		GlStateManager.popMatrix();
+		this.renderHoveredToolTip(mouseX, mouseY);
 	}
 
 	private void sendUpdatePacket(NBTTagCompound tag) {

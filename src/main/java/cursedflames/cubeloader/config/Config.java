@@ -105,7 +105,7 @@ public class Config {
 				newInstance.maxCubesLoaded = tag.getInteger("maxCubesLoaded");
 				newInstance.fueled = tag.getBoolean("fueled");
 				INSTANCE = newInstance;
-				// CommonProxy.logger.info("Synced"+newInstance.maxCubesLoaded);
+				// CubeLoader.logger.info("Synced"+newInstance.maxCubesLoaded);
 				return newInstance;
 			} catch (Error e) {
 				CubeLoader.logger.error("Failed to load sync tag, keeping old SyncedConfig", e);

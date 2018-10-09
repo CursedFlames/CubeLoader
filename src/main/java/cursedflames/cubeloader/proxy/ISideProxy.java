@@ -1,9 +1,15 @@
 package cursedflames.cubeloader.proxy;
 
 public interface ISideProxy {
-	public default String format(String translateKey, Object... parameters) {
-		// Why does Minecraft localize item names, etc. serverside anyway
-		// That doesn't make any sense
-		return translateKey;
+	public default String translateWithArgs(String string, Object... args) {
+		return string;
+	}
+
+	public default String translate(String string) {
+		return string;
+	}
+
+	public default boolean hasTranslationKey(String string) {
+		return false;
 	}
 }
