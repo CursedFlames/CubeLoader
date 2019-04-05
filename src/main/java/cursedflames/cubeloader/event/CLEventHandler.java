@@ -1,7 +1,5 @@
 package cursedflames.cubeloader.event;
 
-import java.util.UUID;
-
 import cursedflames.cubeloader.CubeLoader;
 import cursedflames.cubeloader.block.cubeloader.TESRCubeLoader;
 import cursedflames.cubeloader.chunkloading.ChunkloaderManager;
@@ -39,12 +37,12 @@ public class CLEventHandler {
 			tag.setInteger("time", event.player.world.getMinecraftServer().getTickCounter());
 			PacketHandler.INSTANCE.sendTo(new NBTPacket(tag, HandlerIds.SYNC_SERVER_DATA.id),
 					(EntityPlayerMP) event.player);
-			ChunkloaderManager manager = ChunkloaderManager.getInstance(event.player.world);
-			String name = event.player.getName();
-			UUID id = event.player.getUniqueID();
-			if (name!=manager.getPlayerName(id)) {
-				manager.setPlayerName(id, name);
-			}
+//			ChunkloaderManager manager = ChunkloaderManager.getInstance(event.player.world);
+//			String name = event.player.getName();
+//			UUID id = event.player.getUniqueID();
+//			if (name!=manager.getPlayerName(id)) {
+//				manager.setPlayerName(id, name);
+//			}
 		}
 	}
 

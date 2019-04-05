@@ -26,12 +26,10 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-@Mod(modid = CubeLoader.MODID, name = CubeLoader.MODNAME, version = CubeLoader.VERSION, useMetadata = true)
+@Mod(modid = CubeLoader.MODID, useMetadata = true)
 @Mod.EventBusSubscriber
 public class CubeLoader {
-	public static final String MODNAME = "Cube Loader";
 	public static final String MODID = "cubeloader";
-	public static final String VERSION = "0.0.0";
 
 	public static final RegistryHelper registryHelper = new RegistryHelper(MODID);
 

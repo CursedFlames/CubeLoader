@@ -11,13 +11,14 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.MapStorage;
 import net.minecraft.world.storage.WorldSavedData;
+import net.minecraftforge.common.UsernameCache;
 
 //TODO fix chunk unload on singleplayer dimension change
 public class ChunkloaderManager extends WorldSavedData {
 	public static final String DATA_NAME = CubeLoader.MODID+"_ChunkloaderManager";
 	private static ChunkloaderManager INSTANCE;
 	private Map<UUID, PlayerChunkloaders> loaders = new HashMap<>();
-	private Map<UUID, String> playerNames = new HashMap<>();
+//	private Map<UUID, String> playerNames = new HashMap<>();
 
 	public ChunkloaderManager() {
 		super(DATA_NAME);
@@ -45,7 +46,7 @@ public class ChunkloaderManager extends WorldSavedData {
 			NBTTagCompound tag4 = tag3.getCompoundTag(String.valueOf(i));
 			if (!tag4.hasUniqueId("id")||!tag4.hasKey("name"))
 				continue;
-			playerNames.put(tag4.getUniqueId("id"), tag4.getString("name"));
+//			playerNames.put(tag4.getUniqueId("id"), tag4.getString("name"));
 		}
 	}
 
@@ -62,16 +63,16 @@ public class ChunkloaderManager extends WorldSavedData {
 			tag1.setTag(String.valueOf(i), tag2);
 		}
 		tag.setTag("chunkloaders", tag1);
-		iter = playerNames.keySet().iterator();
-		NBTTagCompound tag3 = new NBTTagCompound();
-		for (int i = 0; iter.hasNext(); i++) {
-			NBTTagCompound tag4 = new NBTTagCompound();
-			UUID id = iter.next();
-			tag4.setUniqueId("id", id);
-			tag4.setString("name", playerNames.get(id));
-			tag3.setTag(String.valueOf(i), tag4);
-		}
-		tag.setTag("playerNames", tag1);
+//		iter = playerNames.keySet().iterator();
+//		NBTTagCompound tag3 = new NBTTagCompound();
+//		for (int i = 0; iter.hasNext(); i++) {
+//			NBTTagCompound tag4 = new NBTTagCompound();
+//			UUID id = iter.next();
+//			tag4.setUniqueId("id", id);
+//			tag4.setString("name", playerNames.get(id));
+//			tag3.setTag(String.valueOf(i), tag4);
+//		}
+//		tag.setTag("playerNames", tag1);
 		return tag;
 	}
 
@@ -109,11 +110,11 @@ public class ChunkloaderManager extends WorldSavedData {
 	}
 
 	public String getPlayerName(UUID id) {
-		return playerNames.get(id);
+		return UsernameCache.getLastKnownUsername(id);// playerNames.get(id);
 	}
 
-	public void setPlayerName(UUID id, String name) {
-		playerNames.put(id, name);
-		markDirty();
-	}
+//	public void setPlayerName(UUID id, String name) {
+//		playerNames.put(id, name);
+//		markDirty();
+//	}
 }
